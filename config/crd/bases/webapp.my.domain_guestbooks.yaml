@@ -65,8 +65,8 @@ spec:
               items:
                 type: string
               type: array
-          required:
-          - standby
+#          required:
+#          - standby
           type: object
       type: object
   version: v1

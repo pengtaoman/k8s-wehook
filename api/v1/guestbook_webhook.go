@@ -42,6 +42,9 @@ func (r *Guestbook) Default() {
 	guestbooklog.Info("default", "name", r.Name)
 
 	// TODO(user): fill in your defaulting logic.
+	r.Status.Standby = append(r.Status.Standby, "Create")
+
+	println("################################")
 	println("#################################  DefaultDefaultDefaultDefaultDefault####################")
 }
 
