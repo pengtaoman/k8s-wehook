@@ -17,6 +17,7 @@ package controllers
 
 import (
 	"context"
+	//"fmt"
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -24,7 +25,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
-	"reflect"
+	//"reflect"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
@@ -54,11 +55,11 @@ func (r *GuestbookReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 			// Request object not found, could have been deleted after reconcile request.
 			// Owned objects are automatically garbage collected. For additional cleanup logic use finalizers.
 			// Return and don't requeue
-			r.Log.Info("Memcached resource not found. Ignoring since object must be deleted")
+			r.Log.Info("GuestBook resource not found. Ignoring since object must be deleted")
 			return reconcile.Result{}, nil
 		}
 		// Error reading the object - requeue the request.
-		r.Log.Error(err, "Failed to get Memcached")
+		r.Log.Error(err, "Failed to get GuestBook")
 		return reconcile.Result{}, err
 	}
 
@@ -99,27 +100,29 @@ func (r *GuestbookReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	}
 
 	// Update the Memcached status with the pod names
-	// List the pods for this memcached's deployment
+	// List the pods for this guestBook's deployment
+
 	podList := &corev1.PodList{}
 	listOpts := []client.ListOption{
 		client.InNamespace(guestBook.Namespace),
 		client.MatchingLabels(map[string]string{"app": "guestBook", "bookZoo": guestBook.Name}),
 	}
 	if err = r.Client.List(context.TODO(), podList, listOpts...); err != nil {
-		r.Log.Error(err, "Failed to list pods", "Memcached.Namespace", guestBook.Namespace, "Memcached.Name", guestBook.Name)
+		r.Log.Error(err, "Failed to list pods", "guestBook.Namespace", guestBook.Namespace, "guestBook.Name", guestBook.Name)
 		return reconcile.Result{}, err
 	}
-	podNames := getPodNames(podList.Items)
+	//podNames := getPodNames(podList.Items)
 
 	// Update status.Nodes if needed
-	if !reflect.DeepEqual(podNames, guestBook.Status.Standby) {
-		guestBook.Status.Standby = podNames
-		err := r.Client.Status().Update(context.TODO(), guestBook)
-		if err != nil {
-			r.Log.Error(err, "Failed to update Memcached status")
-			return reconcile.Result{}, err
-		}
-	}
+	//if !reflect.DeepEqual(podNames, guestBook.Status.Standby) {
+	//	println("######################### Reconcile guestBook.Status.Standby:" + fmt.Sprintf("%+v\n", guestBook.Status.Standby))
+	//	guestBook.Status.Standby = podNames
+	//	err := r.Client.Status().Update(context.TODO(), guestBook)
+	//	if err != nil {
+	//		r.Log.Error(err, "Failed to update guestBook status")
+	//		return reconcile.Result{}, err
+	//	}
+	//}
 
 	return ctrl.Result{}, nil
 }

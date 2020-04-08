@@ -7,8 +7,3 @@ spec:
   foo: bar
   size: 2
   configMapName: "aa"
-  status:
-    standby:
-    - Cat
-    - Dog
-    - Goldfish
