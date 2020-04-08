@@ -17,12 +17,11 @@ package v1
 
 import (
 	"fmt"
-	appsv1 "k8s.io/api/apps/v1"
-	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
+	//corev1 "k8s.io/api/core/v1"
 )
 
 // log is for logging in this package.
@@ -36,7 +35,7 @@ func (r *Guestbook) SetupWebhookWithManager(mgr ctrl.Manager) error {
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 
-// +kubebuilder:webhook:path=/mutate-webapp-my-domain-v1-guestbook,mutating=true,failurePolicy=fail,resources=pods,verbs=create;update,versions=v1,name=mguestbook.kb.io
+// +kubebuilder:webhook:path=/mutate-webapp-my-domain-v1-guestbook,mutating=true,failurePolicy=fail,groups=webapp.my.domain,resources=guestbooks,verbs=create;update,versions=v1,name=mguestbook.kb.io
 
 var _ webhook.Defaulter = &Guestbook{}
 
@@ -44,18 +43,6 @@ var _ webhook.Defaulter = &Guestbook{}
 func (r *Guestbook) Default() {
 
 	println("################################# Default ####################")
-	guestbooklog.Info("default", "name", r.Name)
-
-	// TODO(user): fill in your defaulting logic.
-	r.Status.Standby = make([]string, 0)
-
-}
-
-/////// +kkkkubebuilder:webhook:path=/mutate-webapp-my-domain-v1-guestbook2,mutating=true,failurePolicy=fail,groups=webapp.my.domain,resources=guestbooks,verbs=create;update,versions=v1,name=mguestbook.kb.io
-
-func (r *Guestbook) Default2() {
-
-	println("################################# Default222 ####################")
 	guestbooklog.Info("default", "name", r.Name)
 
 	// TODO(user): fill in your defaulting logic.
