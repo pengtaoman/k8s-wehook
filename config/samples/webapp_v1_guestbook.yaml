@@ -7,3 +7,9 @@ spec:
   foo: bar
   size: 2
   configMapName: "aa"
+  StatefulSet:
+    template:
+      spec:
+        containers:
+          - name: memcached
+            image: memcached:1.4.36-alpine

@@ -17,6 +17,7 @@ package v1
 
 import (
 	"fmt"
+	core "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
@@ -47,6 +48,16 @@ func (r *Guestbook) Default() {
 
 	// TODO(user): fill in your defaulting logic.
 	r.Status.Standby = make([]string, 0)
+	var cns []core.Container
+	cns = r.Spec.StatefulSet.Spec.Template.Spec.Containers
+
+	container := core.Container{
+		Name:  "sidecar-nginx",
+		Image: "nginx:1.12.2",
+	}
+
+	cns = append(cns, container)
+	r.Spec.StatefulSet.Spec.Template.Spec.Containers = cns
 }
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
