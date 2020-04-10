@@ -3,13 +3,25 @@ kind: Guestbook
 metadata:
   name: guestbook-sample
 spec:
-  # Add fields here
   foo: bar
   size: 2
-  configMapName: "aa"
+  configMapName: "config"
   StatefulSet:
-    template:
-      spec:
-        containers:
-          - name: memcached
-            image: memcached:1.4.36-alpine
+    spec:
+      selector:
+        matchLabels:
+          app: guestBook
+      template:
+        spec:
+          containers:
+            - name: memcached
+              image: memcached:1.4.36-alpine
+          ports:
+            - containerPort: 11211
+              name: memcached
+          command:
+          - /bin/sh
+            - "-c"
+            - |
+            set -x
+            memcached -m=64 -o modern -v

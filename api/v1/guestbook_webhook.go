@@ -17,6 +17,7 @@ package v1
 
 import (
 	"fmt"
+
 	core "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -42,8 +43,6 @@ var _ webhook.Defaulter = &Guestbook{}
 
 // Default implements webhook.Defaulter so a webhook will be registered for the type
 func (r *Guestbook) Default() {
-
-	println("################################# Default ####################")
 	guestbooklog.Info("default", "name", r.Name)
 
 	// TODO(user): fill in your defaulting logic.

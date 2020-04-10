@@ -25,6 +25,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
+
 	//"reflect"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -71,7 +72,7 @@ func (r *GuestbookReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	err = r.Client.Get(context.TODO(), types.NamespacedName{Name: guestBook.Name, Namespace: guestBook.Namespace}, found)
 	if err != nil && errors.IsNotFound(err) {
 		// Define a new deployment
-		dep := r.deploymentForGuestBook(guestBook)
+		dep := r.statefulSetForGuestBook(guestBook)
 		r.Log.Info("Creating a new Deployment", "Deployment.Namespace", dep.Namespace, "Deployment.Name", dep.Name)
 		err = r.Client.Create(context.TODO(), dep)
 		if err != nil {
@@ -128,7 +129,7 @@ func (r *GuestbookReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 }
 
 // deploymentForMemcached returns a memcached Deployment object
-func (r *GuestbookReconciler) deploymentForGuestBook(m *webappv1.Guestbook) *appsv1.StatefulSet {
+func (r *GuestbookReconciler) statefulSetForGuestBook(m *webappv1.Guestbook) *appsv1.StatefulSet {
 	ls := map[string]string{"app": "guestBook", "bookZoo": m.Name}
 	replicas := m.Spec.Size
 
@@ -147,15 +148,7 @@ func (r *GuestbookReconciler) deploymentForGuestBook(m *webappv1.Guestbook) *app
 					Labels: ls,
 				},
 				Spec: corev1.PodSpec{
-					Containers: []corev1.Container{{
-						Image:   "memcached:1.4.36-alpine",
-						Name:    "memcached",
-						Command: []string{"memcached", "-m=64", "-o", "modern", "-v"},
-						Ports: []corev1.ContainerPort{{
-							ContainerPort: 11211,
-							Name:          "memcached",
-						}},
-					}},
+					Containers: m.Spec.StatefulSet.Spec.Template.Spec.Containers,
 				},
 			},
 		},
